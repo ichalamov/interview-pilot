@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { Mic, MicOff, Copy, RefreshCw, Settings, Zap } from 'lucide-react';
+import { Mic, MicOff, Copy, RefreshCw, Settings, Zap, Brain, Clock, Check } from 'lucide-react';
+import { Card, GradientButton } from '../components';
 
 function RealTimeCopilot() {
   const [isListening, setIsListening] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState('');
   const [aiResponse, setAiResponse] = useState('');
-  const [mode, setMode] = useState('behavioral'); // behavioral, technical, coding
+  const [mode, setMode] = useState('behavioral');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const sampleQuestions = [
     "Tell me about a time you had to deal with a difficult stakeholder.",
@@ -37,17 +39,28 @@ function RealTimeCopilot() {
     }, 1500);
   };
 
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(aiResponse);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
     <div className="p-8 max-w-6xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-3xl font-bold">Real-Time Copilot</h1>
-          <p className="text-gray-400">Live interview assistance with AI-powered responses</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <span className={`px-3 py-1 rounded-full text-sm ${isListening ? 'bg-green-900 text-green-400' : 'bg-gray-700 text-gray-400'}`}>
-            {isListening ? '🔴 Listening' : '⚪ Not Listening'}
-          </span>
+      <div className="mb-8">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-white mb-2">Real-Time Copilot</h1>
+            <p className="text-gray-500">Live interview assistance with AI-powered responses</p>
+          </div>
+          <div className={`flex items-center gap-2 px-4 py-2 rounded-full border ${
+            isListening 
+              ? 'bg-green-900/30 border-green-800/30 text-green-400' 
+              : 'bg-navy-800 border-cyan-900/20 text-gray-400'
+          }`}>
+            <div className={`w-2 h-2 rounded-full ${isListening ? 'bg-green-400 animate-pulse' : 'bg-gray-500'}`} />
+            <span className="text-sm font-medium">{isListening ? 'Listening' : 'Not Listening'}</span>
+          </div>
         </div>
       </div>
 
@@ -55,139 +68,179 @@ function RealTimeCopilot() {
       <div className="flex gap-3 mb-6">
         <button
           onClick={() => setMode('behavioral')}
-          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-            mode === 'behavioral' ? 'bg-primary-600' : 'bg-gray-800 hover:bg-gray-700'
+          className={`px-5 py-2.5 rounded-lg font-medium transition-all ${
+            mode === 'behavioral' 
+              ? 'bg-gradient-primary text-navy-900 glow-sm' 
+              : 'bg-navy-800 text-gray-400 hover:text-white border border-cyan-900/20'
           }`}
         >
-          Behavioral
+          <div className="flex items-center gap-2">
+            <Brain className="w-4 h-4" />
+            Behavioral
+          </div>
         </button>
         <button
           onClick={() => setMode('technical')}
-          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-            mode === 'technical' ? 'bg-primary-600' : 'bg-gray-800 hover:bg-gray-700'
+          className={`px-5 py-2.5 rounded-lg font-medium transition-all ${
+            mode === 'technical' 
+              ? 'bg-gradient-primary text-navy-900 glow-sm' 
+              : 'bg-navy-800 text-gray-400 hover:text-white border border-cyan-900/20'
           }`}
         >
-          Technical
+          <div className="flex items-center gap-2">
+            <Zap className="w-4 h-4" />
+            Technical
+          </div>
         </button>
         <button
           onClick={() => setMode('coding')}
-          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-            mode === 'coding' ? 'bg-primary-600' : 'bg-gray-800 hover:bg-gray-700'
+          className={`px-5 py-2.5 rounded-lg font-medium transition-all ${
+            mode === 'coding' 
+              ? 'bg-gradient-primary text-navy-900 glow-sm' 
+              : 'bg-navy-800 text-gray-400 hover:text-white border border-cyan-900/20'
           }`}
         >
-          Coding
+          <div className="flex items-center gap-2">
+            <Check className="w-4 h-4" />
+            Coding
+          </div>
         </button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Control Panel */}
-        <div className="bg-gray-800 rounded-xl p-6">
-          <h2 className="text-lg font-semibold mb-4">Controls</h2>
-          
-          <button
-            onClick={() => setIsListening(!isListening)}
-            className={`w-full py-4 rounded-lg font-semibold mb-4 flex items-center justify-center gap-2 transition-colors ${
-              isListening 
-                ? 'bg-red-600 hover:bg-red-700' 
-                : 'bg-green-600 hover:bg-green-700'
-            }`}
-          >
-            {isListening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
-            {isListening ? 'Stop Listening' : 'Start Listening'}
-          </button>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Left Panel - Input */}
+        <div className="space-y-6">
+          <Card>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-white">Live Transcription</h3>
+              <button 
+                onClick={() => setIsListening(!isListening)}
+                className={`p-2 rounded-lg transition-colors ${
+                  isListening 
+                    ? 'bg-red-900/30 text-red-400 hover:bg-red-900/50' 
+                    : 'bg-cyan-900/30 text-cyan-400 hover:bg-cyan-900/50'
+                }`}
+              >
+                {isListening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+              </button>
+            </div>
 
-          <div className="space-y-4">
-            <div>
-              <label className="block text-gray-400 text-sm mb-2">Response Length</label>
-              <input type="range" className="w-full" min="1" max="3" defaultValue="2" />
-              <div className="flex justify-between text-xs text-gray-500 mt-1">
-                <span>Short</span>
-                <span>Medium</span>
-                <span>Long</span>
+            <div className="bg-navy-900/50 rounded-lg p-4 min-h-[200px] border border-cyan-900/20">
+              {isListening ? (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 text-cyan-400 text-sm">
+                    <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+                    Listening for questions...
+                  </div>
+                  <div className="text-gray-300">
+                    <p className="animate-pulse">"Tell me about a time you had to deal with a difficult stakeholder..."</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <Mic className="w-12 h-12 text-gray-600 mx-auto mb-3" />
+                  <p className="text-gray-500">Click the microphone to start listening</p>
+                  <p className="text-gray-600 text-sm mt-1">AI will detect interview questions in real-time</p>
+                </div>
+              )}
+            </div>
+
+            <div className="mt-4">
+              <label className="block text-sm text-gray-500 mb-2">Or type a question</label>
+              <div className="flex gap-3">
+                <input
+                  type="text"
+                  placeholder="Paste interview question here..."
+                  className="input-dark flex-1"
+                  value={currentQuestion}
+                  onChange={(e) => setCurrentQuestion(e.target.value)}
+                />
+                <GradientButton onClick={generateResponse} disabled={isGenerating}>
+                  {isGenerating ? 'Generating...' : 'Generate'}
+                </GradientButton>
+              </div>
+            </div>
+          </Card>
+
+          {/* Sample Questions */}
+          <Card>
+            <h3 className="text-lg font-semibold text-white mb-4">Sample Questions</h3>
+            <div className="space-y-2">
+              {sampleQuestions.map((question, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentQuestion(question)}
+                  className="w-full text-left p-3 rounded-lg bg-navy-800/50 hover:bg-cyan-900/20 border border-cyan-900/10 hover:border-cyan-800/30 transition-all text-sm text-gray-400 hover:text-white"
+                >
+                  {question}
+                </button>
+              ))}
+            </div>
+          </Card>
+        </div>
+
+        {/* Right Panel - AI Response */}
+        <div>
+          <Card className="h-full min-h-[500px]">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-white">AI Response</h3>
+              <div className="flex gap-2">
+                <button 
+                  onClick={generateResponse}
+                  className="p-2 text-gray-400 hover:text-white hover:bg-navy-750 rounded-lg transition-colors"
+                  title="Regenerate"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                </button>
+                <button 
+                  onClick={copyToClipboard}
+                  className="p-2 text-gray-400 hover:text-cyan-400 hover:bg-navy-750 rounded-lg transition-colors"
+                  title="Copy"
+                >
+                  {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
+                </button>
               </div>
             </div>
 
-            <div>
-              <label className="block text-gray-400 text-sm mb-2">Processing Speed</label>
-              <select className="w-full bg-gray-700 rounded-lg p-2 border border-gray-600">
-                <option>Fast (may be less accurate)</option>
-                <option selected>Balanced</option>
-                <option>Thorough (slower)</option>
-              </select>
-            </div>
-
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" className="w-4 h-4 rounded" defaultChecked />
-              <span className="text-sm">Auto-generate responses</span>
-            </label>
-
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" className="w-4 h-4 rounded" />
-              <span className="text-sm">Include filler words</span>
-            </label>
-          </div>
-        </div>
-
-        {/* Live Question */}
-        <div className="bg-gray-800 rounded-xl p-6 lg:col-span-2">
-          <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-            <Zap className="w-5 h-5 text-yellow-400" />
-            Detected Question
-          </h2>
-          
-          <div className="bg-gray-750 rounded-lg p-6 mb-4 min-h-[120px]">
-            {currentQuestion || (
-              <p className="text-gray-500 italic">
-                {isListening ? 'Listening for interviewer questions...' : 'Start listening to detect questions'}
-              </p>
+            {isGenerating ? (
+              <div className="space-y-3">
+                <div className="skeleton h-4 w-3/4" />
+                <div className="skeleton h-4 w-full" />
+                <div className="skeleton h-4 w-5/6" />
+                <div className="skeleton h-4 w-full" />
+                <div className="skeleton h-20 w-full mt-4" />
+              </div>
+            ) : aiResponse ? (
+              <div className="prose prose-invert prose-sm max-w-none">
+                <div className="whitespace-pre-wrap text-gray-300 leading-relaxed">
+                  {aiResponse}
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-16">
+                <Brain className="w-16 h-16 text-gray-700 mx-auto mb-4" />
+                <p className="text-gray-500 mb-2">AI response will appear here</p>
+                <p className="text-gray-600 text-sm">Start listening or type a question to generate</p>
+              </div>
             )}
-          </div>
 
-          <div className="flex gap-2 mb-4">
-            {sampleQuestions.map((q, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrentQuestion(q)}
-                className="text-xs bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded-full transition-colors"
-              >
-                {q.substring(0, 30)}...
-              </button>
-            ))}
-          </div>
-
-          <button
-            onClick={generateResponse}
-            disabled={!currentQuestion || isGenerating}
-            className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-gray-700 disabled:cursor-not-allowed py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
-          >
-            {isGenerating ? <RefreshCw className="w-5 h-5 animate-spin" /> : <Zap className="w-5 h-5" />}
-            {isGenerating ? 'Generating...' : 'Generate Response'}
-          </button>
+            {aiResponse && (
+              <div className="mt-6 pt-4 border-t border-cyan-900/20">
+                <div className="flex items-center gap-4 text-sm text-gray-500">
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4" />
+                    <span>~2 min read</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Zap className="w-4 h-4" />
+                    <span>STAR method</span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </Card>
         </div>
       </div>
-
-      {/* AI Response */}
-      {aiResponse && (
-        <div className="mt-6 bg-gradient-to-r from-primary-900/50 to-purple-900/50 rounded-xl p-6 border border-primary-700">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold">AI Suggested Response</h2>
-            <div className="flex gap-2">
-              <button className="p-2 hover:bg-gray-700 rounded-lg transition-colors" title="Copy">
-                <Copy className="w-5 h-5" />
-              </button>
-              <button className="p-2 hover:bg-gray-700 rounded-lg transition-colors" title="Regenerate">
-                <RefreshCw className="w-5 h-5" />
-              </button>
-            </div>
-          </div>
-          <div className="bg-gray-800/50 rounded-lg p-4 whitespace-pre-line">
-            {aiResponse}
-          </div>
-          <p className="text-gray-400 text-sm mt-3">
-            💡 Tip: Use this as a guide, not a script. Adapt to your natural speaking style.
-          </p>
-        </div>
-      )}
     </div>
   );
 }

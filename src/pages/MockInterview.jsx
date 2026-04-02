@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
-import { Mic, MicOff, Send, StopCircle, Play, Volume2, Settings } from 'lucide-react';
+import { Mic, MicOff, Send, StopCircle, Play, Volume2, Settings, CheckCircle, Clock, Target } from 'lucide-react';
+import { Card, GradientButton, StepAccordion } from '../components';
 
 function MockInterview() {
   const [isRecording, setIsRecording] = useState(false);
@@ -8,7 +9,7 @@ function MockInterview() {
   const [feedback, setFeedback] = useState(null);
   const [selectedRole, setSelectedRole] = useState('Software Engineer');
   const [selectedLevel, setSelectedLevel] = useState('Mid-Level');
-  const transcriptRef = useRef(null);
+  const [currentStep, setCurrentStep] = useState(0);
 
   const mockQuestions = [
     "Tell me about a challenging project you worked on and how you overcame obstacles.",
@@ -32,9 +33,94 @@ function MockInterview() {
     ]
   };
 
+  const steps = [
+    {
+      title: 'Choose Your Role',
+      description: 'Select the position you\'re interviewing for',
+      content: (
+        <div className="grid grid-cols-2 gap-4 mt-4">
+          <div>
+            <label className="block text-sm text-gray-400 mb-2">Role</label>
+            <select 
+              value={selectedRole}
+              onChange={(e) => setSelectedRole(e.target.value)}
+              className="input-dark w-full"
+            >
+              <option>Software Engineer</option>
+              <option>Product Manager</option>
+              <option>Data Scientist</option>
+              <option>UX Designer</option>
+              <option>DevOps Engineer</option>
+              <option>Frontend Developer</option>
+              <option>Backend Developer</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm text-gray-400 mb-2">Experience Level</label>
+            <select 
+              value={selectedLevel}
+              onChange={(e) => setSelectedLevel(e.target.value)}
+              className="input-dark w-full"
+            >
+              <option>Entry-Level</option>
+              <option>Mid-Level</option>
+              <option>Senior</option>
+              <option>Staff/Principal</option>
+            </select>
+          </div>
+        </div>
+      )
+    },
+    {
+      title: 'Configure Interview',
+      description: 'Customize question types and difficulty',
+      content: (
+        <div className="space-y-3 mt-4">
+          <label className="flex items-center gap-3 p-3 rounded-lg bg-navy-800/50 border border-cyan-900/20 cursor-pointer hover:border-cyan-800/40 transition-colors">
+            <input type="checkbox" className="w-4 h-4 rounded accent-cyan-500" defaultChecked />
+            <div>
+              <span className="text-sm font-medium text-white">Behavioral Questions</span>
+              <p className="text-xs text-gray-500">Teamwork, leadership, conflict resolution</p>
+            </div>
+          </label>
+          <label className="flex items-center gap-3 p-3 rounded-lg bg-navy-800/50 border border-cyan-900/20 cursor-pointer hover:border-cyan-800/40 transition-colors">
+            <input type="checkbox" className="w-4 h-4 rounded accent-cyan-500" defaultChecked />
+            <div>
+              <span className="text-sm font-medium text-white">Technical Questions</span>
+              <p className="text-xs text-gray-500">System design, coding, problem-solving</p>
+            </div>
+          </label>
+          <label className="flex items-center gap-3 p-3 rounded-lg bg-navy-800/50 border border-cyan-900/20 cursor-pointer hover:border-cyan-800/40 transition-colors">
+            <input type="checkbox" className="w-4 h-4 rounded accent-cyan-500" />
+            <div>
+              <span className="text-sm font-medium text-white">Case Questions</span>
+              <p className="text-xs text-gray-500">Business scenarios, product thinking</p>
+            </div>
+          </label>
+        </div>
+      )
+    },
+    {
+      title: 'Start Interview',
+      description: 'Begin your AI-powered mock interview',
+      content: (
+        <div className="mt-4 text-center py-6">
+          <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-primary flex items-center justify-center glow">
+            <Mic className="w-10 h-10 text-navy-900" />
+          </div>
+          <p className="text-gray-400 mb-4">You'll answer 5 questions with real-time AI feedback</p>
+          <GradientButton onClick={startInterview} size="lg" icon={Play}>
+            Begin Interview
+          </GradientButton>
+        </div>
+      )
+    }
+  ];
+
   const startInterview = () => {
     setInterviewStarted(true);
     setCurrentQuestion(mockQuestions[0]);
+    setCurrentStep(3);
   };
 
   const toggleRecording = () => {
@@ -48,219 +134,134 @@ function MockInterview() {
     setFeedback(mockFeedback);
   };
 
-  if (!interviewStarted) {
+  if (feedback) {
+    return (
+      <div className="p-8 max-w-5xl mx-auto">
+        <div className="mb-6">
+          <div className="flex items-center gap-3 mb-2">
+            <CheckCircle className="w-6 h-6 text-green-400" />
+            <h1 className="text-2xl font-bold text-white">Interview Complete!</h1>
+          </div>
+          <p className="text-gray-500">Here's your detailed feedback</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <Card>
+            <div className="text-center">
+              <p className="text-sm text-gray-500 mb-2">Clarity</p>
+              <p className="text-4xl font-bold text-cyan-400">{feedback.clarity}%</p>
+            </div>
+          </Card>
+          <Card>
+            <div className="text-center">
+              <p className="text-sm text-gray-500 mb-2">Confidence</p>
+              <p className="text-4xl font-bold text-purple-400">{feedback.confidence}%</p>
+            </div>
+          </Card>
+          <Card>
+            <div className="text-center">
+              <p className="text-sm text-gray-500 mb-2">Structure</p>
+              <p className="text-4xl font-bold text-green-400">{feedback.structure}%</p>
+            </div>
+          </Card>
+        </div>
+
+        <Card className="mb-6">
+          <h3 className="text-lg font-semibold text-white mb-4">Suggestions for Improvement</h3>
+          <ul className="space-y-3">
+            {feedback.suggestions.map((suggestion, index) => (
+              <li key={index} className="flex items-start gap-3">
+                <div className="w-6 h-6 rounded-full bg-cyan-900/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="text-xs text-cyan-400">{index + 1}</span>
+                </div>
+                <span className="text-gray-300">{suggestion}</span>
+              </li>
+            ))}
+          </ul>
+        </Card>
+
+        <div className="flex gap-4">
+          <GradientButton onClick={() => setFeedback(null)} icon={Play}>
+            Try Again
+          </GradientButton>
+          <GradientButton variant="secondary" onClick={endInterview}>
+            Back to Dashboard
+          </GradientButton>
+        </div>
+      </div>
+    );
+  }
+
+  if (interviewStarted && currentQuestion) {
     return (
       <div className="p-8 max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6">Mock Interview</h1>
-        
-        <div className="bg-gray-800 rounded-xl p-6 mb-6">
-          <h2 className="text-xl font-semibold mb-4">Interview Settings</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div>
-              <label className="block text-gray-400 text-sm mb-2">Role</label>
-              <select 
-                value={selectedRole}
-                onChange={(e) => setSelectedRole(e.target.value)}
-                className="w-full bg-gray-700 rounded-lg p-3 border border-gray-600 focus:border-primary-500 outline-none"
-              >
-                <option>Software Engineer</option>
-                <option>Product Manager</option>
-                <option>Data Scientist</option>
-                <option>UX Designer</option>
-                <option>DevOps Engineer</option>
-                <option>Frontend Developer</option>
-                <option>Backend Developer</option>
-              </select>
-            </div>
-            
-            <div>
-              <label className="block text-gray-400 text-sm mb-2">Experience Level</label>
-              <select 
-                value={selectedLevel}
-                onChange={(e) => setSelectedLevel(e.target.value)}
-                className="w-full bg-gray-700 rounded-lg p-3 border border-gray-600 focus:border-primary-500 outline-none"
-              >
-                <option>Entry-Level</option>
-                <option>Mid-Level</option>
-                <option>Senior</option>
-                <option>Staff/Principal</option>
-              </select>
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-2xl font-bold text-white">Question 1 of 5</h1>
+            <p className="text-gray-500">Take your time to think and respond</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className={`px-4 py-2 rounded-full text-sm font-medium ${
+              isRecording ? 'bg-red-900/30 text-red-400 border border-red-800/30' : 'bg-gray-800 text-gray-400'
+            }`}>
+              {isRecording ? '● Recording' : '○ Paused'}
             </div>
           </div>
+        </div>
 
-          <div className="flex items-center gap-4 mb-6">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" className="w-4 h-4 rounded" defaultChecked />
-              <span className="text-sm">Include behavioral questions</span>
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" className="w-4 h-4 rounded" defaultChecked />
-              <span className="text-sm">Include technical questions</span>
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" className="w-4 h-4 rounded" />
-              <span className="text-sm">Timed responses</span>
-            </label>
+        <Card className="mb-6 bg-gradient-to-br from-cyan-900/10 to-purple-900/10 border-cyan-800/30">
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 rounded-xl bg-gradient-primary flex items-center justify-center flex-shrink-0">
+              <Mic className="w-6 h-6 text-navy-900" />
+            </div>
+            <div>
+              <h2 className="text-xl font-semibold text-white mb-2">{currentQuestion}</h2>
+              <p className="text-gray-500 text-sm">Take 30 seconds to prepare, then speak your answer</p>
+            </div>
           </div>
+        </Card>
 
-          <button 
-            onClick={startInterview}
-            className="w-full bg-primary-600 hover:bg-primary-700 text-white font-semibold py-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+        <div className="flex items-center justify-center gap-4 py-8">
+          <button
+            onClick={toggleRecording}
+            className={`w-20 h-20 rounded-full flex items-center justify-center transition-all ${
+              isRecording 
+                ? 'bg-red-500 hover:bg-red-600 glow' 
+                : 'bg-gradient-primary hover:shadow-glow'
+            }`}
           >
-            <Play className="w-5 h-5" />
-            Start Mock Interview
+            {isRecording ? (
+              <StopCircle className="w-10 h-10 text-white" />
+            ) : (
+              <Mic className="w-10 h-10 text-navy-900" />
+            )}
           </button>
         </div>
 
-        <div className="bg-gray-800 rounded-xl p-6">
-          <h3 className="font-semibold mb-3">How it works</h3>
-          <ol className="space-y-2 text-gray-400">
-            <li>1. Select your role and experience level</li>
-            <li>2. Answer AI-generated questions tailored to your profile</li>
-            <li>3. Get instant feedback on clarity, confidence, and structure</li>
-            <li>4. Track your improvement over time</li>
-          </ol>
+        <div className="flex justify-between">
+          <GradientButton variant="ghost">
+            Skip Question
+          </GradientButton>
+          <GradientButton onClick={endInterview}>
+            Finish Interview
+          </GradientButton>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="p-8 max-w-5xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-3xl font-bold">Mock Interview in Progress</h1>
-          <p className="text-gray-400">{selectedRole} • {selectedLevel}</p>
-        </div>
-        <button 
-          onClick={endInterview}
-          className="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-lg font-medium transition-colors"
-        >
-          End Interview
-        </button>
+    <div className="p-8 max-w-4xl mx-auto">
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-white mb-2">Mock Interview</h1>
+        <p className="text-gray-500">Practice with AI-powered interview simulation</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Question Panel */}
-        <div className="bg-gray-800 rounded-xl p-6">
-          <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-            <Volume2 className="w-5 h-5" />
-            Current Question
-          </h2>
-          <div className="bg-gray-750 rounded-lg p-6 mb-6">
-            <p className="text-lg">{currentQuestion}</p>
-          </div>
-
-          <div className="flex items-center justify-center gap-4 mb-6">
-            <button
-              onClick={toggleRecording}
-              className={`w-16 h-16 rounded-full flex items-center justify-center transition-colors ${
-                isRecording 
-                  ? 'bg-red-600 hover:bg-red-700 animate-pulse' 
-                  : 'bg-primary-600 hover:bg-primary-700'
-              }`}
-            >
-              {isRecording ? <MicOff className="w-8 h-8" /> : <Mic className="w-8 h-8" />}
-            </button>
-          </div>
-
-          <p className="text-center text-gray-400 text-sm">
-            {isRecording ? 'Recording... Click to stop' : 'Click microphone to start answering'}
-          </p>
-        </div>
-
-        {/* Live Feedback Panel */}
-        <div className="bg-gray-800 rounded-xl p-6">
-          <h2 className="text-lg font-semibold mb-4">Live Feedback</h2>
-          
-          {isRecording ? (
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-gray-400">Speaking Time</span>
-                <span className="font-mono">00:45</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-gray-400">Filler Words</span>
-                <span className="text-yellow-400">3 detected</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-gray-400">Pace</span>
-                <span className="text-green-400">Good</span>
-              </div>
-              <div className="h-32 bg-gray-750 rounded-lg flex items-center justify-center">
-                <div className="flex gap-1">
-                  {[...Array(20)].map((_, i) => (
-                    <div 
-                      key={i}
-                      className="w-2 bg-primary-500 rounded-full animate-pulse"
-                      style={{ 
-                        height: `${Math.random() * 60 + 20}px`,
-                        animationDelay: `${i * 0.1}s`
-                      }}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-          ) : feedback ? (
-            <div className="space-y-4">
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-gray-400">Clarity</span>
-                  <span className="font-semibold">{feedback.clarity}%</span>
-                </div>
-                <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
-                  <div className="h-full bg-green-500" style={{ width: `${feedback.clarity}%` }} />
-                </div>
-              </div>
-              
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-gray-400">Confidence</span>
-                  <span className="font-semibold">{feedback.confidence}%</span>
-                </div>
-                <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
-                  <div className="h-full bg-blue-500" style={{ width: `${feedback.confidence}%` }} />
-                </div>
-              </div>
-              
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-gray-400">Structure</span>
-                  <span className="font-semibold">{feedback.structure}%</span>
-                </div>
-                <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
-                  <div className="h-full bg-purple-500" style={{ width: `${feedback.structure}%` }} />
-                </div>
-              </div>
-
-              <div className="pt-4 border-t border-gray-700">
-                <h4 className="font-medium mb-2">Suggestions</h4>
-                <ul className="space-y-2">
-                  {feedback.suggestions.map((suggestion, i) => (
-                    <li key={i} className="text-sm text-gray-400 flex items-start gap-2">
-                      <span className="text-primary-400 mt-1">•</span>
-                      {suggestion}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <button 
-                onClick={() => setCurrentQuestion(mockQuestions[1])}
-                className="w-full bg-primary-600 hover:bg-primary-700 py-3 rounded-lg font-medium transition-colors mt-4"
-              >
-                Next Question
-              </button>
-            </div>
-          ) : (
-            <div className="h-full flex items-center justify-center text-gray-400">
-              Start speaking to see live feedback
-            </div>
-          )}
-        </div>
-      </div>
+      <StepAccordion 
+        steps={steps}
+        currentStep={currentStep}
+        onStepChange={setCurrentStep}
+      />
     </div>
   );
 }
