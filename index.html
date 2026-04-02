@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InterviewPilot - AI Interview Coach</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js">
+    <style>
+        .sidebar { transition: width 0.3s ease; }
+        .fade-in { animation: fadeIn 0.3s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        // Dashboard Component
+        function Dashboard() {
+            const features = [
+                { title: 'Mock Interview', desc: 'Practice with AI-powered mock interviews', icon: '🎤', path: 'mock' },
+                { title: 'Real-Time Copilot', desc: 'Live assistance during interviews', icon: '🧠', path: 'realtime' },
+                { title: 'Stealth Mode', desc: 'Discreet overlay for screen-sharing', icon: '👻', path: 'stealth' },
+                { title: 'Coding Copilot', desc: 'Technical interview support', icon: '💻', path: 'coding' },
+                { title: 'Resume Optimizer', desc: 'ATS-friendly resume building', icon: '📄', path: 'resume' },
+                { title: 'Analytics', desc: 'Track your improvement', icon: '📊', path: 'analytics' },
+            ];
+
+            return (
+                <div className="p-8 fade-in">
+                    <h1 className="text-4xl font-bold mb-2">Welcome to InterviewPilot</h1>
+                    <p className="text-gray-400 mb-8">Your AI-powered interview preparation assistant</p>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div className="bg-gray-800 rounded-xl p-6">
+                            <h3 className="text-gray-400 text-sm mb-2">Interviews Completed</h3>
+                            <p className="text-3xl font-bold">24</p>
+                        </div>
+                        <div className="bg-gray-800 rounded-xl p-6">
+                            <h3 className="text-gray-400 text-sm mb-2">Average Score</h3>
+                            <p className="text-3xl font-bold text-green-400">87%</p>
+                        </div>
+                        <div className="bg-gray-800 rounded-xl p-6">
+                            <h3 className="text-gray-400 text-sm mb-2">Hours Practiced</h3>
+                            <p className="text-3xl font-bold">18.5</p>
+                        </div>
+                        <div className="bg-gray-800 rounded-xl p-6">
+                            <h3 className="text-gray-400 text-sm mb-2">Resume Score</h3>
+                            <p className="text-3xl font-bold text-blue-400">92/100</p>
+                        </div>
+                    </div>
+
+                    <h2 className="text-xl font-semibold mb-4">Features</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {features.map((f, i) => (
+                            <div key={i} className="bg-gray-800 rounded-xl p-6 hover:bg-gray-750 transition-all hover:scale-105 cursor-pointer">
+                                <div className="text-4xl mb-4">{f.icon}</div>
+                                <h3 className="text-lg font-semibold mb-2">{f.title}</h3>
+                                <p className="text-gray-400 text-sm">{f.desc}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+
+        // Mock Interview Component
+        function MockInterview() {
+            const [started, setStarted] = useState(false);
+            const [recording, setRecording] = useState(false);
+
+            if (!started) {
+                return (
+                    <div className="p-8 max-w-4xl mx-auto fade-in">
+                        <h1 className="text-3xl font-bold mb-6">Mock Interview</h1>
+                        <div className="bg-gray-800 rounded-xl p-6 mb-6">
+                            <h2 className="text-xl font-semibold mb-4">Interview Settings</h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                <div>
+                                    <label className="block text-gray-400 text-sm mb-2">Role</label>
+                                    <select className="w-full bg-gray-700 rounded-lg p-3 border border-gray-600">
+                                        <option>Software Engineer</option>
+                                        <option>Product Manager</option>
+                                        <option>Data Scientist</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="block text-gray-400 text-sm mb-2">Experience Level</label>
+                                    <select className="w-full bg-gray-700 rounded-lg p-3 border border-gray-600">
+                                        <option>Entry-Level</option>
+                                        <option>Mid-Level</option>
+                                        <option>Senior</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button onClick={() => setStarted(true)} className="w-full bg-primary-600 hover:bg-primary-700 py-4 rounded-lg font-semibold">
+                                Start Mock Interview
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="p-8 max-w-5xl mx-auto fade-in">
+                    <div className="flex items-center justify-between mb-6">
+                        <div>
+                            <h1 className="text-3xl font-bold">Mock Interview</h1>
+                            <p className="text-gray-400">Software Engineer • Mid-Level</p>
+                        </div>
+                        <button onClick={() => setStarted(false)} className="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-lg">
+                            End Interview
+                        </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div className="bg-gray-800 rounded-xl p-6">
+                            <h2 className="text-lg font-semibold mb-4">Current Question</h2>
+                            <div className="bg-gray-750 rounded-lg p-6 mb-6">
+                                <p className="text-lg">Tell me about a challenging project you worked on and how you overcame obstacles.</p>
+                            </div>
+                            <button
+                                onClick={() => setRecording(!recording)}
+                                className={`w-16 h-16 rounded-full flex items-center justify-center transition-colors mx-auto ${
+                                    recording ? 'bg-red-600 animate-pulse' : 'bg-primary-600 hover:bg-primary-700'
+                                }`}
+                            >
+                                {recording ? '⏹️' : '🎤'}
+                            </button>
+                            <p className="text-center text-gray-400 text-sm mt-4">
+                                {recording ? 'Recording...' : 'Click to start answering'}
+                            </p>
+                        </div>
+
+                        <div className="bg-gray-800 rounded-xl p-6">
+                            <h2 className="text-lg font-semibold mb-4">Live Feedback</h2>
+                            {recording ? (
+                                <div className="space-y-4">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-gray-400">Speaking Time</span>
+                                        <span className="font-mono">00:45</span>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-gray-400">Filler Words</span>
+                                        <span className="text-yellow-400">3 detected</span>
+                                    </div>
+                                    <div className="h-32 bg-gray-750 rounded-lg flex items-center justify-center">
+                                        <div className="flex gap-1">
+                                            {[...Array(20)].map((_, i) => (
+                                                <div key={i} className="w-2 bg-primary-500 rounded-full animate-pulse" style={{ height: `${Math.random() * 60 + 20}px` }} />
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="h-full flex items-center justify-center text-gray-400">
+                                    Start speaking to see feedback
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Real-Time Copilot Component
+        function RealTimeCopilot() {
+            const [listening, setListening] = useState(false);
+            const [response, setResponse] = useState('');
+
+            return (
+                <div className="p-8 max-w-6xl mx-auto fade-in">
+                    <div className="flex items-center justify-between mb-6">
+                        <div>
+                            <h1 className="text-3xl font-bold">Real-Time Copilot</h1>
+                            <p className="text-gray-400">Live interview assistance</p>
+                        </div>
+                        <span className={`px-3 py-1 rounded-full text-sm ${listening ? 'bg-green-900 text-green-400' : 'bg-gray-700'}`}>
+                            {listening ? '🔴 Listening' : '⚪ Not Listening'}
+                        </span>
+                    </div>
+
+                    <div className="flex gap-3 mb-6">
+                        {['Behavioral', 'Technical', 'Coding'].map((m) => (
+                            <button key={m} className="px-4 py-2 bg-primary-600 rounded-lg font-medium">{m}</button>
+                        ))}
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div className="bg-gray-800 rounded-xl p-6">
+                            <h2 className="text-lg font-semibold mb-4">Controls</h2>
+                            <button
+                                onClick={() => setListening(!listening)}
+                                className={`w-full py-4 rounded-lg font-semibold mb-4 ${
+                                    listening ? 'bg-red-600' : 'bg-green-600'
+                                }`}
+                            >
+                                {listening ? 'Stop Listening' : 'Start Listening'}
+                            </button>
+                            <div>
+                                <label className="block text-gray-400 text-sm mb-2">Response Length</label>
+                                <input type="range" className="w-full" />
+                            </div>
+                        </div>
+
+                        <div className="bg-gray-800 rounded-xl p-6 lg:col-span-2">
+                            <h2 className="text-lg font-semibold mb-4">Detected Question</h2>
+                            <div className="bg-gray-750 rounded-lg p-6 mb-4">
+                                <p className="text-gray-400 italic">
+                                    {listening ? 'Listening for questions...' : 'Start listening to detect questions'}
+                                </p>
+                            </div>
+                            <button
+                                onClick={() => setResponse(`Here's a STAR method response:
+
+**Situation:** Led migration of legacy system to microservices
+**Task:** Reduce downtime while maintaining data integrity
+**Action:** Implemented blue-green deployment strategy
+**Result:** 99.9% uptime, 40% faster deployments
+
+**Key Points:**
+• Show empathy and active listening
+• Quantify results when possible
+• Keep it under 2 minutes`)}
+                                className="w-full bg-primary-600 hover:bg-primary-700 py-3 rounded-lg font-medium"
+                            >
+                                Generate Response
+                            </button>
+                        </div>
+                    </div>
+
+                    {response && (
+                        <div className="mt-6 bg-gradient-to-r from-primary-900/50 to-purple-900/50 rounded-xl p-6 border border-primary-700">
+                            <h2 className="text-lg font-semibold mb-4">AI Suggested Response</h2>
+                            <pre className="bg-gray-800/50 rounded-lg p-4 whitespace-pre-wrap">{response}</pre>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        // Stealth Mode Component
+        function StealthMode() {
+            const [opacity, setOpacity] = useState(80);
+
+            return (
+                <div className="p-8 max-w-5xl mx-auto fade-in">
+                    <div className="mb-6">
+                        <h1 className="text-3xl font-bold">Stealth Mode</h1>
+                        <p className="text-gray-400">Discreet overlay for screen-sharing</p>
+                    </div>
+
+                    <div className="bg-yellow-900/50 border border-yellow-700 rounded-lg p-4 mb-6">
+                        <span className="text-2xl mr-3">⚠️</span>
+                        <p className="text-sm text-yellow-200">Use responsibly. Some companies may consider AI assistance as cheating. Check interview policy first.</p>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div className="bg-gray-800 rounded-xl p-6">
+                            <h2 className="text-lg font-semibold mb-4">Preview</h2>
+                            <div className="relative bg-gray-900 rounded-lg h-64 overflow-hidden border-2 border-dashed border-gray-600">
+                                <div className="absolute bg-gray-800/95 rounded-lg p-4 shadow-2xl border border-gray-600" style={{ left: '50px', top: '50px', width: '280px', opacity: opacity / 100 }}>
+                                    <div className="flex items-center justify-between mb-2 pb-2 border-b border-gray-600">
+                                        <span className="text-xs font-medium">AI Assistant</span>
+                                        <div className="flex gap-1">
+                                            <div className="w-2 h-2 rounded-full bg-red-500"></div>
+                                            <div className="w-2 h-2 rounded-full bg-yellow-500"></div>
+                                            <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                                        </div>
+                                    </div>
+                                    <pre className="text-xs whitespace-pre-wrap text-gray-300">STAR Response:
+
+Situation: Legacy migration
+Task: Reduce downtime
+Action: Blue-green deploy
+Result: 99.9% uptime</pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="bg-gray-800 rounded-xl p-6">
+                            <h2 className="text-lg font-semibold mb-4">Settings</h2>
+                            <div>
+                                <div className="flex items-center justify-between mb-2">
+                                    <label className="text-sm text-gray-400">Opacity</label>
+                                    <span className="text-sm font-medium">{opacity}%</span>
+                                </div>
+                                <input type="range" min="10" max="100" value={opacity} onChange={(e) => setOpacity(e.target.value)} className="w-full" />
+                            </div>
+                            <div className="mt-4 flex items-center justify-between">
+                                <label className="text-sm">Always on Top</label>
+                                <button className="w-12 h-6 bg-primary-600 rounded-full">
+                                    <div className="w-5 h-5 bg-white rounded-full translate-x-6"></div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Coding Copilot Component
+        function CodingCopilot() {
+            const [problem, setProblem] = useState('');
+            const [solution, setSolution] = useState('');
+
+            const sampleSolution = `def two_sum(nums, target):
+    """
+    Time: O(n), Space: O(n)
+    """
+    seen = {}
+    
+    for i, num in enumerate(nums):
+        complement = target - num
+        if complement in seen:
+            return [seen[complement], i]
+        seen[num] = i
+    
+    return []`;
+
+            return (
+                <div className="p-8 max-w-6xl mx-auto fade-in">
+                    <h1 className="text-3xl font-bold mb-6">Coding Copilot</h1>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div className="bg-gray-800 rounded-xl p-6 lg:col-span-1">
+                            <h2 className="text-lg font-semibold mb-4">Problem</h2>
+                            <textarea
+                                value={problem}
+                                onChange={(e) => setProblem(e.target.value)}
+                                placeholder="Paste coding problem here..."
+                                rows={8}
+                                className="w-full bg-gray-700 rounded-lg p-3 border border-gray-600 mb-4"
+                            />
+                            <div className="space-y-2 mb-4">
+                                {['Two Sum', 'Reverse Linked List', 'Binary Search'].map((p) => (
+                                    <button key={p} onClick={() => setProblem(p)} className="w-full text-left text-sm bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-lg">
+                                        {p}
+                                    </button>
+                                ))}
+                            </div>
+                            <button onClick={() => setSolution(sampleSolution)} className="w-full bg-primary-600 hover:bg-primary-700 py-3 rounded-lg">
+                                Generate Solution
+                            </button>
+                        </div>
+
+                        <div className="bg-gray-800 rounded-xl p-6 lg:col-span-2">
+                            <h2 className="text-lg font-semibold mb-4">Solution</h2>
+                            {solution ? (
+                                <>
+                                    <pre className="bg-gray-900 rounded-lg p-4 overflow-auto max-h-[400px] text-sm font-mono text-gray-300">{solution}</pre>
+                                    <div className="mt-4 grid grid-cols-3 gap-4">
+                                        <div className="bg-gray-750 rounded-lg p-3">
+                                            <div className="text-sm text-gray-400">Time</div>
+                                            <div className="font-mono text-green-400">O(n)</div>
+                                        </div>
+                                        <div className="bg-gray-750 rounded-lg p-3">
+                                            <div className="text-sm text-gray-400">Space</div>
+                                            <div className="font-mono text-blue-400">O(n)</div>
+                                        </div>
+                                        <div className="bg-gray-750 rounded-lg p-3">
+                                            <div className="text-sm text-gray-400">Pattern</div>
+                                            <div className="text-purple-400">Hash Map</div>
+                                        </div>
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="bg-gray-900 rounded-lg p-8 h-[300px] flex items-center justify-center text-gray-500">
+                                    Enter a problem to see solution
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Resume Optimizer Component
+        function ResumeOptimizer() {
+            const [analyzed, setAnalyzed] = useState(false);
+
+            return (
+                <div className="p-8 max-w-6xl mx-auto fade-in">
+                    <h1 className="text-3xl font-bold mb-6">Resume Optimizer</h1>
+
+                    {!analyzed ? (
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div className="bg-gray-800 rounded-xl p-6">
+                                <h2 className="text-lg font-semibold mb-4">Your Resume</h2>
+                                <textarea
+                                    placeholder="Paste your resume text here..."
+                                    rows={12}
+                                    className="w-full bg-gray-700 rounded-lg p-4 border border-gray-600 mb-4"
+                                />
+                                <button onClick={() => setAnalyzed(true)} className="w-full bg-primary-600 hover:bg-primary-700 py-3 rounded-lg">
+                                    Analyze Resume
+                                </button>
+                            </div>
+                            <div className="bg-gray-800 rounded-xl p-6">
+                                <h2 className="text-lg font-semibold mb-4">Job Description (Optional)</h2>
+                                <textarea
+                                    placeholder="Paste job description..."
+                                    rows={12}
+                                    className="w-full bg-gray-700 rounded-lg p-4 border border-gray-600"
+                                />
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="space-y-6">
+                            <div className="bg-gray-800 rounded-xl p-6">
+                                <h2 className="text-lg font-semibold mb-4">Analysis Results</h2>
+                                <div className="grid grid-cols-3 gap-6 text-center">
+                                    <div>
+                                        <div className="text-4xl font-bold text-green-400">78</div>
+                                        <div className="text-sm text-gray-400">ATS Score</div>
+                                    </div>
+                                    <div>
+                                        <div className="text-4xl font-bold text-blue-400">82</div>
+                                        <div className="text-sm text-gray-400">Overall Score</div>
+                                    </div>
+                                    <div>
+                                        <div className="text-4xl font-bold text-purple-400">5/8</div>
+                                        <div className="text-sm text-gray-400">Keywords</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="bg-gray-800 rounded-xl p-6">
+                                <h2 className="text-lg font-semibold mb-4">Suggestions</h2>
+                                <ul className="space-y-2">
+                                    <li className="flex items-start gap-2">
+                                        <span className="text-green-400">✓</span>
+                                        <span>Good formatting and structure</span>
+                                    </li>
+                                    <li className="flex items-start gap-2">
+                                        <span className="text-yellow-400">⚠</span>
+                                        <span>Missing quantifiable achievements</span>
+                                    </li>
+                                    <li className="flex items-start gap-2">
+                                        <span className="text-yellow-400">⚠</span>
+                                        <span>No keywords matching job description</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        // Analytics Component
+        function Analytics() {
+            return (
+                <div className="p-8 max-w-6xl mx-auto fade-in">
+                    <div className="flex items-center justify-between mb-6">
+                        <div>
+                            <h1 className="text-3xl font-bold">Analytics</h1>
+                            <p className="text-gray-400">Track your interview preparation progress</p>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                        <div className="bg-gray-800 rounded-xl p-6">
+                            <div className="text-3xl font-bold">24</div>
+                            <div className="text-sm text-gray-400">Interviews</div>
+                        </div>
+                        <div className="bg-gray-800 rounded-xl p-6">
+                            <div className="text-3xl font-bold text-green-400">87%</div>
+                            <div className="text-sm text-gray-400">Average Score</div>
+                        </div>
+                        <div className="bg-gray-800 rounded-xl p-6">
+                            <div className="text-3xl font-bold">18.5h</div>
+                            <div className="text-sm text-gray-400">Hours Practiced</div>
+                        </div>
+                        <div className="bg-gray-800 rounded-xl p-6">
+                            <div className="text-3xl font-bold text-blue-400">92</div>
+                            <div className="text-sm text-gray-400">Resume Score</div>
+                        </div>
+                    </div>
+
+                    <div className="bg-gray-800 rounded-xl p-6 mb-6">
+                        <h2 className="text-lg font-semibold mb-6">Score Trends</h2>
+                        <div className="h-64 flex items-end justify-between gap-4">
+                            {['Jan', 'Feb', 'Mar', 'Apr'].map((month, i) => (
+                                <div key={month} className="flex-1 flex flex-col items-center gap-2">
+                                    <div className="w-full bg-primary-500 rounded-t" style={{ height: `${70 + i * 5}%` }} />
+                                    <div className="text-sm text-gray-400">{month}</div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="bg-gray-800 rounded-xl p-6">
+                        <h2 className="text-lg font-semibold mb-4">Skill Breakdown</h2>
+                        {['Communication (85%)', 'Technical (78%)', 'Problem Solving (82%)', 'Leadership (75%)'].map((skill, i) => (
+                            <div key={i} className="mb-4">
+                                <div className="flex items-center justify-between mb-2">
+                                    <span className="text-sm">{skill.split(' ')[0]}</span>
+                                    <span className="text-sm font-medium">{skill.split(' ')[1]}</span>
+                                </div>
+                                <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
+                                    <div className="h-full bg-primary-500" style={{ width: skill.split('(')[1].split(')')[0] }} />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+
+        // Main App Component
+        function App() {
+            const [currentView, setCurrentView] = useState('dashboard');
+            const [sidebarOpen, setSidebarOpen] = useState(true);
+
+            const navItems = [
+                { id: 'dashboard', label: 'Dashboard', icon: '🏠' },
+                { id: 'mock', label: 'Mock Interview', icon: '🎤' },
+                { id: 'realtime', label: 'Real-Time', icon: '🧠' },
+                { id: 'stealth', label: 'Stealth Mode', icon: '👻' },
+                { id: 'coding', label: 'Coding', icon: '💻' },
+                { id: 'resume', label: 'Resume', icon: '📄' },
+                { id: 'analytics', label: 'Analytics', icon: '📊' },
+            ];
+
+            const renderView = () => {
+                switch(currentView) {
+                    case 'dashboard': return <Dashboard />;
+                    case 'mock': return <MockInterview />;
+                    case 'realtime': return <RealTimeCopilot />;
+                    case 'stealth': return <StealthMode />;
+                    case 'coding': return <CodingCopilot />;
+                    case 'resume': return <ResumeOptimizer />;
+                    case 'analytics': return <Analytics />;
+                    default: return <Dashboard />;
+                }
+            };
+
+            return (
+                <div className="flex h-screen">
+                    <aside className={`sidebar bg-gray-800 flex flex-col transition-all ${sidebarOpen ? 'w-64' : 'w-20'}`}>
+                        <div className="p-4 border-b border-gray-700">
+                            <h1 className={`font-bold text-xl ${!sidebarOpen && 'text-center'}`}>
+                                {sidebarOpen ? 'InterviewPilot' : 'IP'}
+                            </h1>
+                        </div>
+                        <nav className="flex-1 p-2 space-y-1">
+                            {navItems.map((item) => (
+                                <button
+                                    key={item.id}
+                                    onClick={() => setCurrentView(item.id)}
+                                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors ${
+                                        currentView === item.id ? 'bg-primary-600' : ''
+                                    }`}
+                                >
+                                    <span className="text-xl">{item.icon}</span>
+                                    {sidebarOpen && <span>{item.label}</span>}
+                                </button>
+                            ))}
+                        </nav>
+                        <button onClick={() => setSidebarOpen(!sidebarOpen)} className="absolute -right-3 top-4 bg-gray-700 rounded-full p-1 hover:bg-gray-600">
+                            {sidebarOpen ? '◀' : '▶'}
+                        </button>
+                    </aside>
+                    <main className="flex-1 overflow-auto">{renderView()}</main>
+                </div>
+            );
+        }
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+</html>
